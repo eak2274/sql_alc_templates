@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "sql-alc"
+version = "0.1.0"
+description = ""
+authors = ["Evgeny Kosterin <sparepart74@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic-settings = "^2.3.4"
+sqlalchemy = "^2.0.31"
+psycopg = "^3.2.1"
+pydantic = "^2.8.2"
+fastapi = "^0.111.0"
+alembic = "^1.13.2"
+psycopg-binary = "^3.2.1"
+asyncpg = "^0.29.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
