@@ -1,5 +1,5 @@
 from sqlalchemy import select, and_, func, Integer
-from sqlalchemy.orm import aliased, joinedload, selectinload
+from sqlalchemy.orm import aliased, joinedload, selectinload, contains_eager
 from models import Base, Worker, Resume, Workload
 from database import engine, session_factory, async_session_factory
 from pprint import pprint
@@ -235,3 +235,55 @@ class SyncORM:
             print(res[0].resumes)
 
             print()
+
+    @staticmethod
+    def select_rels_selectinload_parttime_only():
+        with session_factory() as session:
+            stmt = select(Worker).options(selectinload(Worker.resumes_parttime))
+            res = session.execute(stmt).unique().scalars().all()
+            print(res)
+
+            print(res[1].resumes_parttime)
+
+            print()
+
+    # getting only workers that have parttime resumes
+    @staticmethod
+    def select_rels_parttime_only_contains_eager():
+        with (session_factory() as session):
+            stmt = (
+                select(Worker)
+                .join(Resume)
+                .options(contains_eager(Worker.resumes))
+                .filter(Resume.workload == 'parttime')
+            )
+            res = session.execute(stmt).unique().scalars().all()
+            print(res)
+
+            print(res[1].resumes_parttime)
+
+            print()
+
+    @staticmethod
+    def select_rels_limited():
+        with session_factory() as session:
+            # Подзапрос для выбора двух последних резюме для каждого работника
+            subq = (
+                select(Resume)
+                .filter(Resume.worker_id == Worker.id)
+                .order_by(Resume.id.desc())
+                .limit(2)
+                .correlate(Worker)
+                .subquery()
+            )
+
+            # Основной запрос
+            stmt = (
+                select(Worker)
+                .outerjoin(subq)
+                .options(contains_eager(Worker.resumes, alias=subq))
+                .order_by(Worker.id)
+            )
+
+            res = session.execute(stmt).unique().scalars().all()
+            print(res)

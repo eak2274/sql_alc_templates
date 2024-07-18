@@ -64,6 +64,11 @@ class Worker(Base):
     )
     resumes: Mapped[list["Resume"]] = relationship(back_populates="worker")
     # primaryjoin - возможность join с условием
+    resumes_parttime: Mapped[list["Resume"]] = relationship(
+        back_populates="worker",
+        primaryjoin="and_(Resume.worker_id==Worker.id, Resume.workload=='parttime')",
+        order_by="Resume.id.desc()"
+    )
 
     def __str__(self):
         return f"id: {self.id}, name: {self.name}"
@@ -90,3 +95,7 @@ class Resume(Base):
     )
     worker_id: Mapped[int] = mapped_column(ForeignKey("workers.id", ondelete="CASCADE"))
     worker: Mapped["Worker"] = relationship(back_populates="resumes")
+    # backref - устаревший вариант, который заменяет поле модели с relationship и back_populates
+
+# class Vacancy(Base):
+#     id: Mapped[int] = mapped_column(primary_key=True)

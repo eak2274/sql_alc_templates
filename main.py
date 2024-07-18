@@ -24,4 +24,7 @@ from queries.orm import SyncORM
 # asyncio.run(SyncORM.test_join_subquery_cte())
 # SyncORM.inspect()
 # SyncORM.select_rels()
-SyncORM.select_rels_selectinload()
+# SyncORM.select_rels_selectinload()
+# SyncORM.select_rels_selectinload_parttime_only()
+# SyncORM.select_rels_parttime_only_contains_eager()
+SyncORM.select_rels_limited()
